@@ -68,3 +68,6 @@ vim.opt.termguicolors = true
 vim.opt.winbar = "%n %f"
 
 vim.g.mapleader = " "
+
+-- make it really easy to yank things into the clipboard
+vim.keymap.set("n", "<leader>y", "\"*y")
