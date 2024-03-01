@@ -9,5 +9,14 @@ end, {})
 return {
     -- 4. pandoc for converting files
     "folke/zen-mode.nvim",
-    "preservim/vim-pencil"
+    "preservim/vim-pencil",
+    {
+        "iamcco/markdown-preview.nvim",
+        cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+        build = "cd app && yarn install",
+        init = function()
+            vim.g.mkdp_filetypes = { "markdown" }
+        end,
+        ft = { "markdown" },
+    }
 }
