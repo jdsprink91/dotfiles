@@ -8,8 +8,23 @@ end, {})
 
 return {
     -- 4. pandoc for converting files
-    "folke/zen-mode.nvim",
     "preservim/vim-pencil",
+    {
+        "folke/zen-mode.nvim",
+        opts = {
+            window = {
+                options = {
+                    relativenumber = false,
+                    number = false
+                }
+            },
+            plugins = {
+                options = {
+                    laststatus = 0
+                }
+            }
+        }
+    },
     {
         "iamcco/markdown-preview.nvim",
         cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },

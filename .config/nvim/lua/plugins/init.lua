@@ -9,12 +9,6 @@ return {
             vim.cmd.colorscheme("night-owl")
         end,
     },
-    {
-        "mbbill/undotree",
-        keys = {
-            { "<leader>u", vim.cmd.UndotreeToggle }
-        }
-    },
 
     -- git plugins
     {
