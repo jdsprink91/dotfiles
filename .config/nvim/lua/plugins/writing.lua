@@ -1,9 +1,9 @@
-vim.api.nvim_create_user_command("WriterMode", function()
+vim.api.nvim_create_user_command("LiteratureMode", function()
     vim.cmd("ZenMode | SoftPencil | set spell")
 end, {})
 
 vim.api.nvim_create_user_command("CodeMode", function()
-    vim.cmd("close | HardPencil | set nospell")
+    vim.cmd("close | NoPencil | set nospell")
 end, {})
 
 return {
