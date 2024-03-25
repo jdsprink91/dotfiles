@@ -4,6 +4,7 @@ return {
         "rcarriga/nvim-dap-ui",
         "theHamsta/nvim-dap-virtual-text",
         "mfussenegger/nvim-dap-python",
+        "nvim-neotest/nvim-nio",
         { "mxsdev/nvim-dap-vscode-js", tag = "v1.1.0" },
         {
             "microsoft/vscode-js-debug",
