@@ -71,3 +71,6 @@ vim.g.mapleader = " "
 
 -- make it really easy to yank things into the clipboard
 vim.keymap.set("n", "<leader>y", "\"*y")
+
+-- get me a word count
+vim.keymap.set("n", "<leader>wc", "g<C-g>")

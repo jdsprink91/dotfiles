@@ -1,9 +1,9 @@
 vim.api.nvim_create_user_command("LiteratureMode", function()
-    vim.cmd("ZenMode | SoftPencil | set spell")
+    vim.cmd("ZenMode | SoftPencil | set spell | GitGutterDisable")
 end, {})
 
 vim.api.nvim_create_user_command("CodeMode", function()
-    vim.cmd("close | NoPencil | set nospell")
+    vim.cmd("close | NoPencil | set nospell | GitGutterEnable")
 end, {})
 
 return {
@@ -21,7 +21,7 @@ return {
             plugins = {
                 options = {
                     laststatus = 0
-                }
+                },
             }
         }
     },

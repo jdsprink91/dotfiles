@@ -166,12 +166,22 @@ return {
             enabled = function()
                 -- it was getting annoying to see cmp work inside comments, this disables that
                 local in_prompt = vim.api.nvim_buf_get_option(0, 'buftype') == 'prompt'
-                if in_prompt then     -- this will disable cmp in the Telescope window (taken from the default config)
+                if in_prompt then -- this will disable cmp in the Telescope window (taken from the default config)
                     return false
                 end
                 local context = require("cmp.config.context")
                 return not (context.in_treesitter_capture("comment") == true or context.in_syntax_group("Comment"))
-            end
+            end,
+            sources = cmp.config.sources({
+                { name = "nvim_lsp" },
+                -- { name = "codeium" }
+            }, {
+                { name = "path", },
+                { name = "buffer", keyword_length = 5 }
+            })
         })
+
+        cmp.setup.filetype("markdown", { enabled = false })
+
     end
 }
