@@ -7,26 +7,31 @@ return {
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
 
-        -- Autocompletion
+        -- schema store for json and yaml
+        "b0o/schemastore.nvim",
+
+        -- autocomplete
         "hrsh7th/nvim-cmp",
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-path",
-        "hrsh7th/cmp-cmdline",
         "saadparwaiz1/cmp_luasnip",
         "hrsh7th/cmp-nvim-lua",
 
-        -- Snippets
-        "L3MON4D3/LuaSnip",
-        "rafamadriz/friendly-snippets",
-        -- schema store for json and yaml
-        "b0o/schemastore.nvim",
+        -- autocomplete snippets
+        {
+            "L3MON4D3/LuaSnip",
+            dependencies = {
+                "rafamadriz/friendly-snippets",
+            }
+        },
+
+        -- formatter for autocomplete
+        "onsails/lspkind.nvim",
     },
     config = function()
         local lsp_zero = require("lsp-zero")
         local lspconfig = require("lspconfig")
-        local mason = require("mason")
-        local mason_lspconfig = require("mason-lspconfig")
         local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
         capabilities.textDocument.completion.completionItem.snippetSupport = true
         local schemastore = require("schemastore")
@@ -42,17 +47,13 @@ return {
             end, opts)
         end)
 
-        mason.setup {}
-        mason_lspconfig.setup {
+        require("mason").setup {}
+        require("mason-lspconfig").setup {
             ensure_installed = { "astro", "cssls", "html", "eslint", "jsonls", "lua_ls", "pylsp", "tailwindcss",
                 "tsserver", "yamlls" },
             handlers = {
                 lsp_zero.default_setup,
-                cssls = function()
-                    lspconfig.cssls.setup {
-                        capabilities = capabilities
-                    }
-                end,
+                -- we need to set these up special for special reasons
                 html = function()
                     lspconfig.html.setup {
                         capabilities = capabilities,
@@ -64,6 +65,7 @@ return {
                 end,
                 eslint = function()
                     lspconfig.eslint.setup {
+                        capabilities = capabilities,
                         on_attach = function(client)
                             -- turn on that eslint is a formatting provider for the appropriate
                             -- file types
@@ -83,9 +85,6 @@ return {
                             }
                         }
                     }
-                end,
-                lua_ls = function()
-                    lspconfig.lua_ls.setup(lsp_zero.nvim_lua_ls())
                 end,
                 pylsp = function()
                     lspconfig.pylsp.setup {
@@ -125,9 +124,6 @@ return {
                         }
                     }
                 end,
-                tsserver = function()
-                    lspconfig.tsserver.setup {}
-                end,
                 yamlls = function()
                     lspconfig.yamlls.setup {
                         capabilities = capabilities,
@@ -152,16 +148,27 @@ return {
 
         }
 
-        -- setup using enter for autocomplete selection
+        -- HERE BE THE AUTOCOMPLETE SETUP
+        require("luasnip.loaders.from_vscode").lazy_load()
+
         local cmp = require('cmp')
-        local cmp_action = lsp_zero.cmp_action()
         cmp.setup({
-            formatting = lsp_zero.cmp_format(),
+            preselect = 'item',
+            completion = {
+                completeopt = 'menu,menuone,noinsert'
+            },
+            formatting = {
+                format = require("lspkind").cmp_format({
+                    mode = "symbol",
+                    maxwidth = 50,
+                    ellipsis_char = "..."
+                })
+            },
             mapping = {
-                -- setting select to true means it will select the first item
-                ['<CR>'] = cmp.mapping.confirm({ select = true }),
-                ['<Tab>'] = cmp_action.tab_complete(),
-                ['<S-Tab>'] = cmp_action.select_prev_or_fallback(),
+                ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+                ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+                ["<C-e>"] = cmp.mapping.abort(),
+                ["<C-y>"] = cmp.mapping.confirm({ select = true })
             },
             enabled = function()
                 -- it was getting annoying to see cmp work inside comments, this disables that
@@ -173,15 +180,26 @@ return {
                 return not (context.in_treesitter_capture("comment") == true or context.in_syntax_group("Comment"))
             end,
             sources = cmp.config.sources({
+                { name = "nvim_lua" },
                 { name = "nvim_lsp" },
+                { name = "luasnip" },
                 -- { name = "codeium" }
             }, {
-                { name = "path", },
+                { name = "path" },
                 { name = "buffer", keyword_length = 5 }
-            })
+            }),
+            snippet = {
+                expand = function(args)
+                    require 'luasnip'.lsp_expand(args.body)
+                end
+            },
+            experimental = {
+                ghost_text = true
+            }
         })
 
+        -- filetypes that should disable completion
         cmp.setup.filetype("markdown", { enabled = false })
-
+        cmp.setup.filetype("gitcommit", { enabled = false })
     end
 }
