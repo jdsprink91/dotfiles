@@ -201,5 +201,6 @@ return {
         -- filetypes that should disable completion
         cmp.setup.filetype("markdown", { enabled = false })
         cmp.setup.filetype("gitcommit", { enabled = false })
+        cmp.setup.filetype("oil", { enabled = false })
     end
 }

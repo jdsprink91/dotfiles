@@ -19,13 +19,6 @@ return {
         }
     },
 
-    {
-        "f-person/git-blame.nvim",
-        config = function()
-            -- git blame
-            vim.g.gitblame_display_virtual_text = 0 -- Disable virtual text
-        end
-    },
     "airblade/vim-gitgutter",
 
     -- visual help with tabs and spaces
@@ -51,6 +44,7 @@ return {
             "f-person/git-blame.nvim",
         },
         config = function()
+            vim.g.gitblame_display_virtual_text = 0 -- Disable virtual text
             local lualine = require("lualine")
             local gitblame = require("gitblame")
             lualine.setup {
@@ -69,6 +63,7 @@ return {
                         'encoding', 'fileformat', 'filetype'
                     }
                 },
+                extensions = {'oil', 'lazy', 'fugitive'}
             }
         end
     },
