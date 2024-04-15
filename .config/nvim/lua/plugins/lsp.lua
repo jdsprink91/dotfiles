@@ -183,7 +183,6 @@ return {
                 { name = "nvim_lua" },
                 { name = "nvim_lsp" },
                 { name = "luasnip" },
-                -- { name = "codeium" }
             }, {
                 { name = "path" },
                 { name = "buffer", keyword_length = 5 }
