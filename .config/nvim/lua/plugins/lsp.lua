@@ -1,9 +1,7 @@
 return {
-    "VonHeikemen/lsp-zero.nvim",
-    branch = "v3.x",
+    "neovim/nvim-lspconfig",
     dependencies = {
         -- LSP Support
-        "neovim/nvim-lspconfig",
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
 
@@ -30,29 +28,53 @@ return {
         "onsails/lspkind.nvim",
     },
     config = function()
-        local lsp_zero = require("lsp-zero")
         local lspconfig = require("lspconfig")
-        local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-        capabilities.textDocument.completion.completionItem.snippetSupport = true
         local schemastore = require("schemastore")
 
-        lsp_zero.on_attach(function(_, bufnr)
-            local opts = { buffer = bufnr }
-            lsp_zero.default_keymaps({ buffer = bufnr, omit = { "gs" } })
-            vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-            vim.keymap.set("n", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+        -- note: diagnostics are not exclusive to lsp servers
+        -- so these can be global keybindings
+        vim.keymap.set('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>')
+        vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
+        vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
 
-            vim.keymap.set({ 'n', 'x' }, '<leader>pf', function()
-                vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
-            end, opts)
-        end)
+        vim.api.nvim_create_autocmd('LspAttach', {
+            desc = 'LSP actions',
+            callback = function(event)
+                local opts = { buffer = event.buf }
+
+                -- these will be buffer-local keybindings
+                -- because they only work if you have an active language server
+
+                vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+                vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+                vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+                vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+                vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+                vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+                vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+                vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+                vim.keymap.set({ 'n', 'x' }, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+                vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+                vim.keymap.set({ 'n', 'x' }, '<leader>pf', function()
+                    vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
+                end, opts)
+            end
+        })
+
+        local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
+        capabilities.textDocument.completion.completionItem.snippetSupport = true
+        local default_setup = function(server)
+            lspconfig[server].setup({
+                capabilities = capabilities,
+            })
+        end
 
         require("mason").setup {}
         require("mason-lspconfig").setup {
             ensure_installed = { "astro", "cssls", "html", "eslint", "jsonls", "lua_ls", "pylsp", "tailwindcss",
                 "tsserver", "yamlls" },
             handlers = {
-                lsp_zero.default_setup,
+                default_setup,
                 -- we need to set these up special for special reasons
                 html = function()
                     lspconfig.html.setup {
@@ -124,6 +146,15 @@ return {
                         }
                     }
                 end,
+                tsserver = function()
+                    lspconfig.tsserver.setup {
+                        capabilities = capabilities,
+                        on_attach = function(client)
+                            -- I use null-ls to format code, deactivate this
+                            client.resolved_capabilities.document_formatting = false
+                        end
+                    }
+                end,
                 yamlls = function()
                     lspconfig.yamlls.setup {
                         capabilities = capabilities,
@@ -165,10 +196,10 @@ return {
                 })
             },
             mapping = {
-                ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-                ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+                ["<Tab>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+                ["<S-Tab>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
                 ["<C-e>"] = cmp.mapping.abort(),
-                ["<C-y>"] = cmp.mapping.confirm({ select = true })
+                ["<CR>"] = cmp.mapping.confirm({ select = false })
             },
             enabled = function()
                 -- it was getting annoying to see cmp work inside comments, this disables that
