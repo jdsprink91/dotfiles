@@ -6,7 +6,10 @@ return {
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
+            require('night-owl').setup()
             vim.cmd.colorscheme("night-owl")
+            vim.api.nvim_set_hl(0, "IndentLine", {link = "@nowl.indentChar"})
+            vim.api.nvim_set_hl(0, "IndentLineCurrent", {link = "@nowl.indentChar.active"})
         end,
     },
 
@@ -23,18 +26,12 @@ return {
 
     -- visual help with tabs and spaces
     {
-        "lukas-reineke/indent-blankline.nvim",
-        main = "ibl",
-        opts = {
-            indent = {
-                char = "¦"
-            },
-            exclude = {
-                filetypes = {
-                    "alpha"
-                }
-            }
-        }
+        "nvimdev/indentmini.nvim",
+        config = function ()
+           require("indentmini").setup({
+               char = "¦"
+           })
+        end
     },
 
     -- statusline plugin
@@ -63,7 +60,7 @@ return {
                         'encoding', 'fileformat', 'filetype'
                     }
                 },
-                extensions = {'oil', 'lazy', 'fugitive'}
+                extensions = { 'oil', 'lazy', 'fugitive' }
             }
         end
     },
@@ -77,7 +74,6 @@ return {
         end
     },
 
-    { "numToStr/Comment.nvim", config = true, },
     { "windwp/nvim-autopairs", config = true },
 
     -- session management

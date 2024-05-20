@@ -74,3 +74,6 @@ vim.keymap.set("n", "<leader>y", "\"*y")
 
 -- get me a word count
 vim.keymap.set("n", "<leader>wc", "g<C-g>")
+
+-- load last session
+vim.keymap.set("n", "<leader>ls", ":SessionManager load_last_session<cr>")
