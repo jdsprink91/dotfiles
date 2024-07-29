@@ -31,6 +31,9 @@ return {
         local lspconfig = require("lspconfig")
         local schemastore = require("schemastore")
 
+        vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
+        vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+
         vim.api.nvim_create_autocmd('LspAttach', {
             desc = 'LSP actions',
             callback = function(event)
@@ -64,8 +67,8 @@ return {
 
         require("mason").setup {}
         require("mason-lspconfig").setup {
-            ensure_installed = { "astro", "cssls", "html", "eslint", "jsonls", "lua_ls", "pylsp", "tailwindcss",
-                "tsserver", "yamlls" },
+            ensure_installed = { "astro", "cssls", "html", "eslint", "jsonls", "lua_ls", "pylsp",
+                "tsserver", "yamlls", "mdx_analyzer" },
             handlers = {
                 default_setup,
                 -- we need to set these up special for special reasons
@@ -130,21 +133,12 @@ return {
                         }
                     }
                 end,
-                tailwindcss = function()
-                    lspconfig.tailwindcss.setup {
-                        init_options = {
-                            userLanguages = {
-                                htmldjango = "html"
-                            },
-                        }
-                    }
-                end,
                 tsserver = function()
                     lspconfig.tsserver.setup {
                         capabilities = capabilities,
                         on_attach = function(client)
                             -- I use null-ls to format code, deactivate this
-                            client.resolved_capabilities.document_formatting = false
+                            client.server_capabilities.document_formatting = false
                         end
                     }
                 end,
@@ -223,6 +217,7 @@ return {
 
         -- filetypes that should disable completion
         cmp.setup.filetype("markdown", { enabled = false })
+        cmp.setup.filetype("markdown.mdx", { enabled = false })
         cmp.setup.filetype("gitcommit", { enabled = false })
         cmp.setup.filetype("oil", { enabled = false })
     end

@@ -1,18 +1,17 @@
 vim.api.nvim_create_user_command("LiteratureMode", function()
-    vim.cmd("ZenMode | SoftPencil | set spell | GitGutterDisable")
+    vim.cmd("ZenMode | set spell | GitGutterDisable")
 end, {})
 
 vim.api.nvim_create_user_command("CodeMode", function()
-    vim.cmd("close | NoPencil | set nospell | GitGutterEnable")
+    vim.cmd("close | set nospell | GitGutterEnable")
 end, {})
 
 return {
-    -- 4. pandoc for converting files
-    "preservim/vim-pencil",
     {
         "folke/zen-mode.nvim",
         opts = {
             window = {
+                width = 85,
                 options = {
                     relativenumber = false,
                     number = false

@@ -77,3 +77,25 @@ vim.keymap.set("n", "<leader>wc", "g<C-g>")
 
 -- load last session
 vim.keymap.set("n", "<leader>ls", ":SessionManager load_last_session<cr>")
+
+vim.filetype.add({
+    extension = {
+        mdx = 'markdown.mdx'
+    }
+})
+
+-- add wrapping for markdown files
+-- autocmds
+vim.api.nvim_create_autocmd('BufWinEnter', {
+    pattern = { '*.md', '*.mdx' },
+    callback = function()
+        vim.opt.textwidth = 80
+    end,
+})
+
+vim.api.nvim_create_autocmd({ 'BufWinLeave' }, {
+    pattern = { '*.md', '*.mdx' },
+    callback = function()
+        vim.opt.textwidth = 0
+    end,
+})
