@@ -62,11 +62,6 @@ vim.api.nvim_create_autocmd({
     end
 })
 
-vim.opt.termguicolors = true
-
--- want the buffer number and the filename
-vim.opt.winbar = "%n %f"
-
 vim.g.mapleader = " "
 
 -- make it really easy to yank things into the clipboard
@@ -99,3 +94,56 @@ vim.api.nvim_create_autocmd({ 'BufWinLeave' }, {
         vim.opt.textwidth = 0
     end,
 })
+
+vim.treesitter.language.register("bash", "zsh")
+
+local function get_icon()
+    local path = vim.fn.bufname()
+
+    if vim.bo.filetype == "" then
+        return "", "Default"
+    end
+
+    if vim.fn.isdirectory(path) > 0 then
+        return "", "Default"
+    end
+
+    local devicons = require("nvim-web-devicons")
+    local filename = vim.fn.expand("%:t")
+
+    local icon, highlight_name = devicons.get_icon(filename, vim.fn.expand("%:e:e"))
+
+    if not icon then
+        icon, highlight_name = devicons.get_icon(filename, vim.fn.expand("%:e"))
+
+        if not icon then
+            return "", "Default"
+        end
+    end
+
+    return icon, highlight_name
+end
+
+local function register_winbar()
+    vim.api.nvim_create_autocmd({ "VimEnter", "BufEnter", "WinEnter", "WinLeave" }, {
+        group    = vim.api.nvim_create_augroup("winbar_winbar", { clear = true }),
+        callback = function(args)
+            local win_number = vim.api.nvim_get_current_win()
+            local win_config = vim.api.nvim_win_get_config(win_number)
+
+            if win_config.relative == "" then
+                local icon, hl = get_icon()
+                if args.event == "WinLeave" then
+                    hl = "WinbarNC"
+                    vim.opt_local.winbar = " " .. "%*" .. " %#" .. hl .. "#" .. icon .. " %t%*"
+                else
+                    vim.opt_local.winbar = " " .. "%*" .. " %#" .. hl .. "#" .. icon .. " %#Type#%t%*"
+                end
+            else
+                vim.opt_local.winbar = nil
+            end
+        end
+    })
+end
+
+register_winbar()

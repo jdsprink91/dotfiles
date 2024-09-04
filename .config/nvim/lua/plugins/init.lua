@@ -6,10 +6,12 @@ return {
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
-            require('night-owl').setup()
+            require('night-owl').setup({
+                italics = false
+            })
             vim.cmd.colorscheme("night-owl")
-            vim.api.nvim_set_hl(0, "IndentLine", {link = "@nowl.indentChar"})
-            vim.api.nvim_set_hl(0, "IndentLineCurrent", {link = "@nowl.indentChar.active"})
+            vim.api.nvim_set_hl(0, "IndentLine", { link = "@nowl.indentChar" })
+            vim.api.nvim_set_hl(0, "IndentLineCurrent", { link = "@nowl.indentChar.active" })
         end,
     },
 
@@ -27,10 +29,10 @@ return {
     -- visual help with tabs and spaces
     {
         "nvimdev/indentmini.nvim",
-        config = function ()
-           require("indentmini").setup({
-               char = "¦"
-           })
+        config = function()
+            require("indentmini").setup({
+                char = "¦",
+            })
         end
     },
 
@@ -141,4 +143,7 @@ return {
             vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
         end
     },
+    dev = {
+        path = "~/code"
+    }
 }

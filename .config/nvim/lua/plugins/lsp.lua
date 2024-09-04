@@ -54,6 +54,8 @@ return {
                 vim.keymap.set({ 'n', 'x' }, '<leader>pf', function()
                     vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
                 end, opts)
+                local client = vim.lsp.get_client_by_id(event.data.client_id)
+                client.server_capabilities.semanticTokensProvider = nil
             end
         })
 
@@ -100,6 +102,29 @@ return {
                                     enable = true
                                 },
                                 schemas = schemastore.json.schemas(),
+                            }
+                        }
+                    }
+                end,
+                lua_ls = function()
+                    lspconfig.lua_ls.setup {
+                        settings = {
+                            Lua = {
+                                runtime = {
+                                    version = "LuaJIT"
+                                },
+                                diagnostics = {
+                                    globals = {
+                                        "vim",
+                                        "require"
+                                    }
+                                },
+                                workspace = {
+                                    library = vim.api.nvim_get_runtime_file("", true)
+                                },
+                                telemetry = {
+                                    enable = false
+                                }
                             }
                         }
                     }

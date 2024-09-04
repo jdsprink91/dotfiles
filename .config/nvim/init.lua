@@ -11,4 +11,11 @@ end
 vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 
 -- setup plugins
-require('lazy').setup("plugins")
+require("lazy").setup({
+    spec = {
+        import = "plugins"
+    },
+    dev = {
+        path = "~/code"
+    },
+})
