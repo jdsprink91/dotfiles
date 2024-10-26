@@ -22,7 +22,6 @@ return {
             previewer = false,
             layout_config = layout_config
         })
-        local dropdown_theme = require('telescope.themes').get_dropdown()
 
         telescope.setup {
             defaults = {
@@ -47,10 +46,12 @@ return {
                             ["<C-f>"] = lga_actions.quote_prompt({ postfix = " -g " })
                         }
                     },
-                    theme = dropdown_theme
+                    theme = "dropdown"
                 }
             }
         }
+
+        telescope.load_extension("live_grep_args")
 
         -- finding files with no previewer
         vim.keymap.set('n', '<leader>ff', function() builtin.find_files(dropdown_theme_no_previewer) end, {})

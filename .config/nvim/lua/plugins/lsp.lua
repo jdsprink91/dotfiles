@@ -52,7 +52,8 @@ return {
                 vim.keymap.set('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
                 vim.keymap.set('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
                 vim.keymap.set({ 'n', 'x' }, '<leader>pf', function()
-                    vim.lsp.buf.format({ async = false, timeout_ms = 10000 })
+                    vim.lsp.buf.format({ async = false, timeout_ms = 10000, bufnr = vim.api.nvim_get_current_buf(), desc =
+                    "[lsp] format" })
                 end, opts)
                 local client = vim.lsp.get_client_by_id(event.data.client_id)
                 client.server_capabilities.semanticTokensProvider = nil
@@ -70,7 +71,7 @@ return {
         require("mason").setup {}
         require("mason-lspconfig").setup {
             ensure_installed = { "astro", "cssls", "html", "eslint", "jsonls", "lua_ls", "pylsp",
-                "tsserver", "yamlls", "mdx_analyzer" },
+                "ts_ls", "yamlls", "mdx_analyzer" },
             handlers = {
                 default_setup,
                 -- we need to set these up special for special reasons
@@ -158,8 +159,8 @@ return {
                         }
                     }
                 end,
-                tsserver = function()
-                    lspconfig.tsserver.setup {
+                ts_ls = function()
+                    lspconfig.ts_ls.setup {
                         capabilities = capabilities,
                         on_attach = function(client)
                             -- I use null-ls to format code, deactivate this
