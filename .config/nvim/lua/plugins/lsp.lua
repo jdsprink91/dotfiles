@@ -74,7 +74,7 @@ return {
 
         require("mason").setup {}
         require("mason-lspconfig").setup {
-            ensure_installed = { "astro", "cssls", "html", "eslint", "jsonls", "lua_ls", "prettierd", "pylsp",
+            ensure_installed = { "astro", "cssls", "html", "eslint", "jsonls", "lua_ls", "pylsp",
                 "ts_ls", "yamlls", "mdx_analyzer" },
             handlers = {
                 default_setup,

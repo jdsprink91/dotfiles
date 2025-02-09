@@ -54,8 +54,12 @@ return {
         telescope.load_extension("live_grep_args")
 
         -- finding files with no previewer
-        vim.keymap.set('n', '<leader>ff', function() builtin.find_files(dropdown_theme_no_previewer) end, {})
-        vim.keymap.set('n', '<leader>gf', function() builtin.git_files(dropdown_theme_no_previewer) end, {})
+        vim.keymap.set('n', '<leader>ff', function() builtin.find_files(dropdown_theme_no_previewer) end,
+            { desc = "Telescope Find Files" })
+        vim.keymap.set('n', '<leader>gf', function() builtin.git_files(dropdown_theme_no_previewer) end,
+            { desc = "Telescope Git Files" })
+        vim.keymap.set('n', '<leader>fb', function() builtin.buffers(dropdown_theme_no_previewer) end,
+            { desc = "Telescope Find Bufgit_filesfers" })
 
         -- greps
         vim.keymap.set('n', '<leader>lg', function()
