@@ -198,6 +198,9 @@ return {
 
         -- autocomplete
         require("luasnip.loaders.from_vscode").lazy_load()
+        local t = function(str)
+            return vim.api.nvim_replace_termcodes(str, true, true, true)
+        end
 
         local cmp = require('cmp')
         cmp.setup({
@@ -213,10 +216,40 @@ return {
                 })
             },
             mapping = {
-                ["<Tab>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-                ["<S-Tab>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+                ['<C-n>'] = cmp.mapping({
+                    c = function()
+                        if cmp.visible() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            vim.api.nvim_feedkeys(t('<Down>'), 'n', true)
+                        end
+                    end,
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            fallback()
+                        end
+                    end
+                }),
+                ['<C-p>'] = cmp.mapping({
+                    c = function()
+                        if cmp.visible() then
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            vim.api.nvim_feedkeys(t('<Up>'), 'n', true)
+                        end
+                    end,
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            fallback()
+                        end
+                    end
+                }),
                 ["<C-e>"] = cmp.mapping.abort(),
-                ["<CR>"] = cmp.mapping.confirm({ select = false })
+                ["<C-y>"] = cmp.mapping.confirm({ select = false })
             },
             enabled = function()
                 -- it was getting annoying to see cmp work inside comments, this disables that
