@@ -113,16 +113,11 @@ return {
 
     {
         "nvimtools/none-ls.nvim",
-        dependencies = {
-            "MunifTanjim/prettier.nvim"
-        },
         config = function()
             -- I just want prettier
             local null_ls = require("null-ls")
-            local prettier = require("prettier")
-            null_ls.setup()
-            prettier.setup({
-                bin = "prettierd"
+            null_ls.setup({
+                sources = null_ls.builtins.formatting.prettierd
             })
         end
     },

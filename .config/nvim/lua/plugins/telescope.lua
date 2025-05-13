@@ -10,9 +10,14 @@ return {
     config = function()
         local telescope = require('telescope')
         local builtin = require('telescope.builtin')
-        local lga_actions = require("telescope-live-grep-args.actions")
         local themes = require("telescope.themes")
+
+        -- doing this b/c linux mint has an issue with filenames being too long in the
+        -- encrypted home directory: https://github.com/neovim/neovim/issues/25008#issuecomment-1715415068
+        vim.loader.enable(false)
+        local lga_actions = require("telescope-live-grep-args.actions")
         local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
+        vim.loader.enable(true)
 
         local layout_config = {
             width = 0.5
@@ -26,6 +31,15 @@ return {
         telescope.setup {
             defaults = {
                 file_ignore_patterns = { "node_modules/", ".git/" },
+                path_display = function(_, path)
+                    local tail = vim.fs.basename(path)
+                    local parent = vim.fs.dirname(path)
+                    if parent == "." then
+                        return tail
+                    end
+
+                    return string.format("%s\t\t%s", tail, parent)
+                end
             },
             pickers = {
                 find_files = {

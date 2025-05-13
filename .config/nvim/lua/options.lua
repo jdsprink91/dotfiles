@@ -147,3 +147,19 @@ local function register_winbar()
 end
 
 register_winbar()
+
+vim.api.nvim_create_user_command('LspHealth', function()
+    vim.cmd(':checkhealth vim.lsp')
+end, { desc = 'Shortcut for :checkhealth vim.lsp' })
+
+vim.api.nvim_create_user_command('LspLog', function()
+    vim.cmd('split' .. vim.lsp.get_log_path())
+end, { desc = 'Opens the LSP client log' })
+
+-- set mah diagnostics
+vim.diagnostic.config({
+    jump = {
+        float = true
+    },
+    update_in_insert = false
+})
