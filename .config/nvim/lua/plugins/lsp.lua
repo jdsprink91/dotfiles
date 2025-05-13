@@ -24,6 +24,11 @@ return {
             desc = 'LSP actions',
             callback = function(event)
                 vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', { desc = "Go to definition" })
+                vim.keymap.set('n', '<leader>gd', function()
+                    vim.cmd('vsplit')
+                    vim.lsp.buf.definition()
+                end, { desc = "Go to definition in vertical split" })
+
                 vim.keymap.set({ 'n', 'x' }, '<leader>f', function()
                     vim.lsp.buf.format({
                         async = false,
