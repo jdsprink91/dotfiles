@@ -3,7 +3,6 @@ return {
     build = ':TSUpdate',
     dependencies = {
         "nvim-treesitter/nvim-treesitter-textobjects",
-        "nvim-treesitter/nvim-treesitter-context",
     },
     opts = {
         -- Automatically install missing parsers when entering buffer
@@ -25,7 +24,7 @@ return {
         incremental_selection = {
             enable = true,
             keymaps = {
-                init_selection = "<Leader>ss",     -- set to `false` to disable one of the mappings
+                init_selection = "<Leader>ss", -- set to `false` to disable one of the mappings
                 node_incremental = "<Leader>si",
                 scope_incremental = "<Leader>sc",
                 node_decremental = "<Leader>sd",
