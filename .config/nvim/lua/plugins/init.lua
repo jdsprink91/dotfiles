@@ -32,6 +32,7 @@ return {
         config = function()
             require("indentmini").setup({
                 char = "¦",
+                exclude = { "markdown" }
             })
         end
     },
@@ -39,31 +40,32 @@ return {
     -- statusline plugin
     {
         "nvim-lualine/lualine.nvim",
-        dependencies = {
-            "f-person/git-blame.nvim",
-        },
         config = function()
-            vim.g.gitblame_display_virtual_text = 0 -- Disable virtual text
-            local lualine = require("lualine")
-            local gitblame = require("gitblame")
-            lualine.setup {
+            require("lualine").setup({
                 options = {
                     globalstatus = true
                 },
                 sections = {
-                    lualine_x = {
+                    lualine_c = {
+                        'filename',
                         {
-                            gitblame.get_current_blame_text,
-                            cond = gitblame.is_blame_text_available,
-                            fmt = function(str)
-                                return str:sub(1, 75)
-                            end
-                        },
-                        'encoding', 'fileformat', 'filetype'
+                            'lsp_status',
+                            icon = '', -- f013
+                            symbols = {
+                                -- Standard unicode symbols to cycle through for LSP progress:
+                                spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' },
+                                -- Standard unicode symbol for when LSP is done:
+                                done = '✓',
+                                -- Delimiter inserted between LSP names:
+                                separator = ', ',
+                            },
+                            -- List of LSP names to ignore (e.g., `null-ls`):
+                            ignore_lsp = { "null-ls" },
+                        }
                     }
                 },
                 extensions = { 'oil', 'lazy', 'fugitive' }
-            }
+            })
         end
     },
 
@@ -77,21 +79,6 @@ return {
     },
 
     { "windwp/nvim-autopairs", config = true },
-
-    -- session management
-    {
-        "Shatur/neovim-session-manager",
-        config = function()
-            local config = require('session_manager.config')
-
-            -- don't automatically load up previous session
-            -- Define what to do when Neovim is started without arguments. Possible values: Disabled, CurrentDir, LastSession
-            require('session_manager').setup({
-                autoload_mode = config.AutoloadMode.Disabled,
-            })
-        end
-    },
-
 
     -- helps with repeating thing
     "tpope/vim-repeat",
@@ -134,7 +121,4 @@ return {
             vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
         end
     },
-    dev = {
-        path = "~/code"
-    }
 }

@@ -73,12 +73,13 @@ return {
         vim.keymap.set('n', '<leader>gf', function() builtin.git_files(dropdown_theme_no_previewer) end,
             { desc = "Telescope Git Files" })
         vim.keymap.set('n', '<leader>fb', function() builtin.buffers(dropdown_theme_no_previewer) end,
-            { desc = "Telescope Find Bufgit_filesfers" })
+            { desc = "Telescope Find Buffers" })
 
         -- greps
         vim.keymap.set('n', '<leader>lg', function()
             telescope.extensions.live_grep_args.live_grep_args()
-        end, {})
-        vim.keymap.set("n", "<leader>gw", live_grep_args_shortcuts.grep_word_under_cursor)
+        end, { desc = "Telescope Live Grep" })
+        vim.keymap.set("n", "<leader>gw", live_grep_args_shortcuts.grep_word_under_cursor,
+            { desc = "Telescope Live Grep Word Under Cursor" })
     end
 }
